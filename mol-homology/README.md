@@ -5,7 +5,7 @@
 
 ## Requirements
 
-python 3.7
+python 3.7:
 ```
 pytorch                   1.8.1             
 torch-geometric           1.7.0
@@ -13,6 +13,8 @@ rdkit                     2022.3.3
 tqdm                      4.31.1
 tensorboardx              1.6
 ```
+
+The other remaining packages can be latest version.
 
 All the necessary data files can be downloaded from the following links.
 Download from [data](http://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), put it under `finetune/`, and unzip it.
@@ -26,7 +28,7 @@ python data_utils_NC.py
 ```
 
 ## Training
-You can pretrain the model by
+You can pretrain the Tengfei's model by
 ```
 cd pretrain
 python pretrain_supervised.py
