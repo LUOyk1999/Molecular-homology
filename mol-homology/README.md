@@ -8,8 +8,9 @@ tqdm                      4.31.1
 tensorboardx              1.6
 ```
 
-* `pretrain/` contains codes for self-supervised pretraining.
-* `finetune/` contains codes for finetuning on MoleculeNet benchmarks for evaluation.
+* `pretrain/` contains codes for Tengfei's model pre-training.
+* `pretrain_PI/` contains codes for PI predictor pre-training.
+* `finetune/` contains codes for fine-tuning on MoleculeNet benchmarks for evaluation.
 
 All the necessary data files can be downloaded from the following links.
 
