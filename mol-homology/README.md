@@ -49,7 +49,6 @@ python pretrain_supervised.py
 
 # If pre-training is based on Hu's model:
 python pretrain_supervised.py --input_model_file ./saved_model/masking
-
 ```
 
 ## Evaluation
