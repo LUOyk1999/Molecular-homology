@@ -20,8 +20,6 @@ import pandas as pd
 import os
 import shutil
 
-from tensorboardX import SummaryWriter
-
 criterion = nn.BCEWithLogitsLoss(reduction = "none")
 
 def print_to_file(filename, string_info, mode="a"):
@@ -32,7 +30,7 @@ def print_to_file(filename, string_info, mode="a"):
 def train(args, model, device, loader, optimizer):
     model.train()
 
-    for step, batch in enumerate(tqdm(loader, desc="Iteration")):
+    for step, batch in enumerate(loader):
         batch = batch.to(device)
         pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
         y = batch.y.view(pred.shape).to(torch.float64)
@@ -56,7 +54,7 @@ def eval(args, model, device, loader):
     y_true = []
     y_scores = []
 
-    for step, batch in enumerate(tqdm(loader, desc="Iteration")):
+    for step, batch in enumerate(loader):
         batch = batch.to(device)
 
         with torch.no_grad():
@@ -109,9 +107,8 @@ def main():
     parser.add_argument('--JK', type=str, default="last",
                         help='how the node features across layers are combined. last, sum, max or concat')
     parser.add_argument('--gnn_type', type=str, default="gin")
-    parser.add_argument('--dataset', type=str, default = 'tox21', help='root directory of dataset. For now, only classification.')
-    parser.add_argument('--input_model_file', type=str, default = '../pretrain/saved_model/homology_output.pth', help='filename to read the model (if there is any)')
-    parser.add_argument('--filename', type=str, default = '', help='output filename')
+    parser.add_argument('--dataset', type=str, default = 'clintox', help='root directory of dataset. For now, only classification.')
+    parser.add_argument('--input_model_file', type=str, default = '', help='filename to read the model (if there is any)')
     parser.add_argument('--seed', type=int, default=42, help = "Seed for splitting the dataset.")
     parser.add_argument('--runseed', type=int, default=0, help = "Seed for minibatch selection, random initialization.")
     parser.add_argument('--split', type = str, default="scaffold", help = "random or scaffold or random_scaffold")
@@ -192,16 +189,7 @@ def main():
 
     train_acc_list = []
     val_acc_list = []
-    test_acc_list = []
-
-
-    if not args.filename == "":
-        fname = 'runs/finetune_cls_runseed' + str(args.runseed) + '/' + args.filename
-        #delete the directory if there exists one
-        if os.path.exists(fname):
-            shutil.rmtree(fname)
-            print("removed the existing file.")
-        writer = SummaryWriter(fname)
+    test_acc_list = []        
     
     Val=0
     test=0
@@ -209,8 +197,7 @@ def main():
         print("====epoch " + str(epoch))
         
         train(args, model, device, train_loader, optimizer)
-
-        print("====Evaluation")
+        
         if args.eval_train:
             train_acc = eval(args, model, device, train_loader)
         else:
@@ -222,23 +209,19 @@ def main():
         val_acc_list.append(val_acc)
         test_acc_list.append(test_acc)
         train_acc_list.append(train_acc)
-
-        if(val_acc>Val):
+        
+        if(val_acc > Val and epoch >= 10):
             Val=val_acc
             test=test_acc
-        print("train: %f val: %f test: %f" %(train_acc, val_acc, test_acc))
-        print(Val,test)
+        print("train: %f val: %f test: %f Best val: %f Best test: %f" %(train_acc, val_acc, test_acc, Val, test))
+    if not args.input_model_file == "":
+        fname = 'runs/'+ args.dataset
+        if not os.path.exists(fname):
+            os.makedirs(fname)
+        print_to_file(fname+'/'+args.input_model_file.split('/')[-1] + '.txt', args.dataset + ",%d,%.3f,%.3f" % (args.runseed, Val, test))
+    else:
+        fname = 'result.txt'
+        print_to_file(fname, args.dataset + ",%d,%.3f,%.3f" % (args.runseed, Val, test))
 
-        if not args.filename == "":
-            writer.add_scalar('data/train auc', train_acc, epoch)
-            writer.add_scalar('data/val auc', val_acc, epoch)
-            writer.add_scalar('data/test auc', test_acc, epoch)
-
-        print("")
-
-    if not args.filename == "":
-        writer.close()
-    
-    print_to_file("result.txt", args.dataset+","+str(Val)+","+str(test))
 if __name__ == "__main__":
     main()

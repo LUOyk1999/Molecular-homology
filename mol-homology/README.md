@@ -1,65 +1,53 @@
 ## Requirements
 python 3.7
 ```
-pytorch                   1.8.1             
-torch-geometric           1.7.0
+pytorch                   1.12.1            
+torch-geometric           2.2.0
 rdkit                     2022.3.3
-tqdm                      4.31.1
-tensorboardx              1.6
+tqdm                      4.64.0
 ```
 
-* `pretrain/` contains codes for Tengfei's model pre-training.
-* `pretrain_PI/` contains codes for PI predictor pre-training.
+* `pretrain_PI/` contains codes for our pre-training.
 * `finetune/` contains codes for fine-tuning on MoleculeNet benchmarks for evaluation.
 
-All the necessary data files can be downloaded from the following links.
+1. All the necessary data files can be downloaded from the following links.
+   Download from [data](http://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), put it under `./finetune/`, and unzip it. Remember to delete the old `geometric_data_processed.pt` file.
+   You can use this sh script to delete these files directly:
 
-Download from [data](http://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), put it under `./finetune/`, and unzip it. Remember to delete the old `geometric_data_processed.pt` file.
+```
+cd finetune
+sh remove_old.sh
+```
+2. Download from [PI](https://drive.google.com/file/d/1rzg5PdyhlQ17_lSqgy524tqJ6xl-CB8r) (1.1GB), put it under `./pretrain_PI/`, and unzip it.
 
-Download from [PI](https://drive.google.com/file/d/1rzg5PdyhlQ17_lSqgy524tqJ6xl-CB8r) (1.1GB), put it under `./pretrain_PI/`, and unzip it.
-
-# PI predictor model
+# Self-supervised representation learning over molecules using homology
 
 ## Training
-You can pretrain the model by
 ```
 cd pretrain_PI
+```
+You can pretrain PI predictor by
+```
 python pretrain_supervised.py
 ```
-## Evaluation
-You can evaluate the pretrained model by finetuning on downstream tasks
+You can pretrain TDL by
 ```
-cd finetune
-python finetune.py --input_model_file ../pretrain_PI/output.pth --dataset bace
+python pretrain_TDL.py
 ```
-
-# Tengfei's model
-
-## Generate PD
-
+You can pretrain GraphCL+TDL by
 ```
-cd pretrain
-python data_utils_NC.py
-```
-
-## Training
-You can pretrain the model by
-```
-cd pretrain
-python pretrain_supervised.py
-
-# If pre-training is based on Hu's model:
-python pretrain_supervised.py --input_model_file ./saved_model/masking
+pretrain_graphcl_TDL.py
 ```
 
 ## Evaluation
+
 You can evaluate the pretrained model by finetuning on downstream tasks
 ```
 cd finetune
-python finetune.py
+python finetune.py --input_model_file ../pretrain_PI/pretrain_models/graphcl_TDL_epoch100.pth --dataset bace
 
 or
 
 cd finetune
-sh run.sh
+sh run.sh graphcl_TDL_epoch100 0
 ```

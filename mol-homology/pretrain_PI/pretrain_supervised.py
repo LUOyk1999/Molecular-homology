@@ -17,8 +17,6 @@ from sklearn.metrics import roc_auc_score
 from splitters import scaffold_split, random_split, random_scaffold_split
 import pandas as pd
 
-from tensorboardX import SummaryWriter
-
 # criterion = nn.BCEWithLogitsLoss(reduction = "none")
 Loss = torch.nn.MSELoss()
 
@@ -67,8 +65,8 @@ def main():
     parser.add_argument('--dataset', type=str, default = 'zinc_standard_agent', help='root directory of dataset. For now, only classification.')
     parser.add_argument('--gnn_type', type=str, default="gin")
     parser.add_argument('--input_model_file', type=str, default = '', help='filename to read the model (if there is any)')
-    parser.add_argument('--output_model_file', type = str, default = 'output', help='filename to output the pre-trained model')
-    parser.add_argument('--num_workers', type=int, default = 8, help='number of workers for dataset loading')
+    parser.add_argument('--output_model_file', type = str, default = 'output_PI_', help='filename to output the pre-trained model')
+    parser.add_argument('--num_workers', type=int, default = 4, help='number of workers for dataset loading')
     args = parser.parse_args()
 
 
@@ -116,9 +114,9 @@ def main():
         loss = train(args, model, device, loader, optimizer)
         print(loss)
 
-        if not args.output_model_file == "":
-            torch.save(model.gnn.state_dict(), args.output_model_file + ".pth")
-            torch.save(model.state_dict(), args.output_model_file + "_total.pth")
+        if epoch % 20 == 0:
+            if not args.output_model_file == "":
+                torch.save(model.gnn.state_dict(), args.output_model_file + str(epoch) + ".pth")
 
 if __name__ == "__main__":
     main()

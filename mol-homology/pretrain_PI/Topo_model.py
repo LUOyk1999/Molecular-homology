@@ -43,7 +43,7 @@ class GINConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_attr):
         #add self loops in the edge space
-        edge_index,_ = add_self_loops(edge_index, num_nodes = x.size(0))
+        edge_index, _ = add_self_loops(edge_index, num_nodes = x.size(0))
 
         #add features corresponding to self-loop edges.
         self_loop_attr = torch.zeros(x.size(0), 2)
@@ -301,7 +301,7 @@ class Topo_Model(torch.nn.Module):
         
         self.gnn = GNN(num_layer=5, emb_dim=hidden_dim, JK='last', drop_ratio=dropout, gnn_type = 'gin')
         self.pool = global_mean_pool
-        self.projection_head = nn.Sequential(nn.Linear(hidden_dim, 150), nn.ReLU(inplace=True), nn.Linear(150, 75))
+        self.projection_head = nn.Sequential(nn.Linear(hidden_dim, 300), nn.ReLU(inplace=True), nn.Linear(300, 100))
         
     def from_pretrained(self, model_file):
         self.gnn.load_state_dict(torch.load(model_file))
