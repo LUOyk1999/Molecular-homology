@@ -28,26 +28,17 @@ cd pretrain_PI
 ```
 You can pretrain PI predictor by
 ```
-python pretrain_supervised.py
+python PIP.py
 ```
-You can pretrain TDL by
-```
-python pretrain_TDL.py
-```
-You can pretrain GraphCL+TDL by
-```
-pretrain_graphcl_TDL.py
-```
-
 ## Evaluation
 
 You can evaluate the pretrained model by finetuning on downstream tasks
 ```
 cd finetune
-python finetune.py --input_model_file ../pretrain_PI/pretrain_models/graphcl_TDL_epoch100.pth --dataset bace
+python finetune.py --input_model_file ../pretrain_PI/pretrain_models/PIP_atom_hks_200.pth --dataset bace
 
 or
 
 cd finetune
-sh run.sh graphcl_TDL_epoch100 0
+sh run.sh PIP_atom_hks_200 0
 ```

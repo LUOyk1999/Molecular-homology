@@ -326,7 +326,6 @@ class MoleculeDataset(InMemoryDataset):
                                    dtype='str')
             smiles_list = list(input_df['smiles'])
             zinc_id_list = list(input_df['zinc_id'])
-            topo_feature1, topo_feature2, topo_feature3, topo_feature4 = self.topo
             for i in range(len(smiles_list)):
                 print(i)
                 s = smiles_list[i]
@@ -343,9 +342,6 @@ class MoleculeDataset(InMemoryDataset):
                         id = int(zinc_id_list[i].split('ZINC')[1].lstrip('0'))
                         data.id = torch.tensor(
                             [id])  # id here is zinc id value, stripped of
-                        data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i]),torch.FloatTensor(topo_feature4[i])]
-                        data.PI = torch.cat(data.PI)
-                        # print(data.PI)
                         # leading zeros
                         data_list.append(data)
                         data_smiles_list.append(smiles_list[i])
@@ -1019,7 +1015,7 @@ class MoleculeDataset_aug(InMemoryDataset):
     def process(self):
         data_smiles_list = []
         data_list = []
-        topo_feature1, topo_feature2, topo_feature3, topo_feature4 = self.topo
+        topo_feature1, topo_feature2, topo_feature3 = self.topo
         if self.dataset == 'zinc_standard_agent':
             input_path = self.raw_paths[0]
             input_df = pd.read_csv(input_path, sep=',', compression='gzip',
@@ -1042,7 +1038,7 @@ class MoleculeDataset_aug(InMemoryDataset):
                         data.id = torch.tensor(
                             [id])  # id here is zinc id value, stripped of
                         # leading zeros
-                        data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i]),torch.FloatTensor(topo_feature4[i])]
+                        data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
                         data.PI = torch.cat(data.PI)
                         data_list.append(data)
                         data_smiles_list.append(smiles_list[i])
@@ -1131,6 +1127,13 @@ class MoleculeDataset_aug(InMemoryDataset):
         elif self.dataset == 'tox21':
             smiles_list, rdkit_mol_objs, labels = \
                 _load_tox21_dataset(self.raw_paths[0])
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             for i in range(len(smiles_list)):
                 print(i)
                 rdkit_mol = rdkit_mol_objs[i]
@@ -1143,12 +1146,21 @@ class MoleculeDataset_aug(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor(labels[i, :])
+                data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                data.PI = torch.cat(data.PI)
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'hiv':
             smiles_list, rdkit_mol_objs, labels = \
                 _load_hiv_dataset(self.raw_paths[0])
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             for i in range(len(smiles_list)):
                 print(i)
                 rdkit_mol = rdkit_mol_objs[i]
@@ -1161,10 +1173,19 @@ class MoleculeDataset_aug(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor([labels[i]])
+                data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                data.PI = torch.cat(data.PI)
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'bace':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, folds, labels = \
                 _load_bace_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1179,11 +1200,20 @@ class MoleculeDataset_aug(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor([labels[i]])
+                data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                data.PI = torch.cat(data.PI)
                 data.fold = torch.tensor([folds[i]])
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'bbbp':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, labels = \
                 _load_bbbp_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1199,10 +1229,19 @@ class MoleculeDataset_aug(InMemoryDataset):
                         [i])  # id here is the index of the mol in
                     # the dataset
                     data.y = torch.tensor([labels[i]])
+                    data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                    data.PI = torch.cat(data.PI)
                     data_list.append(data)
                     data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'clintox':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, labels = \
                 _load_clintox_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1218,6 +1257,8 @@ class MoleculeDataset_aug(InMemoryDataset):
                         [i])  # id here is the index of the mol in
                     # the dataset
                     data.y = torch.tensor(labels[i, :])
+                    data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                    data.PI = torch.cat(data.PI)
                     data_list.append(data)
                     data_smiles_list.append(smiles_list[i])
 
@@ -1276,6 +1317,13 @@ class MoleculeDataset_aug(InMemoryDataset):
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'muv':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, labels = \
                 _load_muv_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1290,6 +1338,8 @@ class MoleculeDataset_aug(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor(labels[i, :])
+                data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                data.PI = torch.cat(data.PI)
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
@@ -1341,6 +1391,13 @@ class MoleculeDataset_aug(InMemoryDataset):
         # elif self.dataset == ''
 
         elif self.dataset == 'sider':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, labels = \
                 _load_sider_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1355,10 +1412,19 @@ class MoleculeDataset_aug(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor(labels[i, :])
+                data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                data.PI = torch.cat(data.PI)
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'toxcast':
+            with open('./'+self.dataset+'_atom_Pi.pkl', 'rb') as f:
+                topo_feature1 = pickle.load(f)
+            with open('./'+self.dataset+'_degree_Pi.pkl', 'rb') as f:
+                topo_feature2 = pickle.load(f)
+            with open('./'+self.dataset+'_hks0.1_Pi.pkl', 'rb') as f:
+                topo_feature3 = pickle.load(f)
+            
             smiles_list, rdkit_mol_objs, labels = \
                 _load_toxcast_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
@@ -1374,6 +1440,8 @@ class MoleculeDataset_aug(InMemoryDataset):
                         [i])  # id here is the index of the mol in
                     # the dataset
                     data.y = torch.tensor(labels[i, :])
+                    data.PI = [torch.FloatTensor(topo_feature1[i]),torch.FloatTensor(topo_feature2[i]),torch.FloatTensor(topo_feature3[i])]
+                    data.PI = torch.cat(data.PI)
                     data_list.append(data)
                     data_smiles_list.append(smiles_list[i])
 
