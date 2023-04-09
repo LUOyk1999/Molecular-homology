@@ -18,7 +18,7 @@ tqdm                      4.64.0
 cd finetune
 sh remove_old.sh
 ```
-2. Download from [PI](https://drive.google.com/file/d/1rzg5PdyhlQ17_lSqgy524tqJ6xl-CB8r) (1.1GB), put it under `./pretrain_PI/`, and unzip it.
+2. Download from [PI](https://drive.google.com/file/d/1dIpehI1CTICguRjm-4o_RjQUvZrqfQwC/view?usp=share_link) (1.1GB), put it under `./pretrain_PI/`, and unzip it.
 
 # Self-supervised representation learning over molecules using homology
 
