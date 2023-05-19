@@ -51,7 +51,7 @@ def train(args, model, device, loader, optimizer):
         optimizer.step()
 
 
-def eval(args, model, device, loader):
+def eval(args, model, device, loader, out=''):
     model.eval()
     y_true = []
     y_scores = []
@@ -79,6 +79,16 @@ def eval(args, model, device, loader):
         print("Some target is missing!")
         print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
 
+    if out:
+        # if y_true.shape[1] == 1:
+        #     data = {"target": y_true, "predicted": y_scores, "idx": loader.dataset._indices.tolist()}
+        # else:
+        data = {"idx": loader.dataset._indices}
+        for i in range(y_true.shape[1]):
+            data[f"target_{i}"] = y_true[:,i]
+            data[f"pred_{i}"] = y_scores[:, i]
+        pd.DataFrame.from_dict(data).to_csv(out, index=False)
+
     return sum(roc_list)/len(roc_list) #y_true.shape[1]
 
 
@@ -90,7 +100,7 @@ def main():
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='input batch size for training (default: 32)')
-    parser.add_argument('--epochs', type=int, default=100,
+    parser.add_argument('--epochs', type=int, default=2,
                         help='number of epochs to train (default: 100)')
     parser.add_argument('--lr', type=float, default=0.001,
                         help='learning rate (default: 0.001)')
@@ -109,16 +119,17 @@ def main():
     parser.add_argument('--JK', type=str, default="last",
                         help='how the node features across layers are combined. last, sum, max or concat')
     parser.add_argument('--gnn_type', type=str, default="gin")
-    parser.add_argument('--data_dir', type=str, default = 'dataset', help='root directory of dataset. For now, only classification.')
+    parser.add_argument('--dir_data', type=str, default = 'dataset', help='root directory of dataset. For now, only classification.')
 
-    parser.add_argument('--dataset', type=str, default = 'tox21', help='root directory of dataset. For now, only classification.')
-    parser.add_argument('--input_model_file', type=str, default = '../pretrain/saved_model/homology_output.pth', help='filename to read the model (if there is any)')
+    parser.add_argument('--dataset', type=str, default = 'hiv', help='root directory of dataset. For now, only classification.')
+    parser.add_argument('--input_model_file', type=str, default = '../pretrain_PI/pretraining_model/PI_predictor_atom.pth', help='filename to read the model (if there is any)')
     parser.add_argument('--filename', type=str, default = '', help='output filename')
     parser.add_argument('--seed', type=int, default=42, help = "Seed for splitting the dataset.")
     parser.add_argument('--runseed', type=int, default=0, help = "Seed for minibatch selection, random initialization.")
     parser.add_argument('--split', type = str, default="scaffold", help = "random or scaffold or random_scaffold")
     parser.add_argument('--eval_train', type=int, default = 0, help='evaluating training or not')
     parser.add_argument('--num_workers', type=int, default = 4, help='number of workers for dataset loading')
+    parser.add_argument('--write_pred', type=int, default=1, help='')
     args = parser.parse_args()
 
 
@@ -207,40 +218,46 @@ def main():
     
     Val=0
     test=0
-    for epoch in range(1, args.epochs+1):
-        print("====epoch " + str(epoch))
-        
-        train(args, model, device, train_loader, optimizer)
-
-        print("====Evaluation")
-        if args.eval_train:
-            train_acc = eval(args, model, device, train_loader)
-        else:
-            print("omit the training accuracy computation")
-            train_acc = 0
-        val_acc = eval(args, model, device, val_loader)
-        test_acc = eval(args, model, device, test_loader)
-
-        val_acc_list.append(val_acc)
-        test_acc_list.append(test_acc)
-        train_acc_list.append(train_acc)
-
-        if(val_acc>Val):
-            Val=val_acc
-            test=test_acc
-        print("train: %f val: %f test: %f" %(train_acc, val_acc, test_acc))
-        print(Val,test)
-
-        if not args.filename == "":
-            writer.add_scalar('data/train auc', train_acc, epoch)
-            writer.add_scalar('data/val auc', val_acc, epoch)
-            writer.add_scalar('data/test auc', test_acc, epoch)
-
-        print("")
+    # for epoch in range(1, args.epochs+1):
+    #     print("====epoch " + str(epoch))
+    #
+    #     train(args, model, device, train_loader, optimizer)
+    #
+    #     print("====Evaluation")
+    #     if args.eval_train:
+    #         train_acc = eval(args, model, device, train_loader)
+    #     else:
+    #         print("omit the training accuracy computation")
+    #         train_acc = 0
+    #     val_acc = eval(args, model, device, val_loader)
+    #     test_acc = eval(args, model, device, test_loader)
+    #
+    #     val_acc_list.append(val_acc)
+    #     test_acc_list.append(test_acc)
+    #     train_acc_list.append(train_acc)
+    #
+    #     if(val_acc>Val):
+    #         Val=val_acc
+    #         test=test_acc
+    #     print("train: %f val: %f test: %f" %(train_acc, val_acc, test_acc))
+    #     print(Val,test)
+    #
+    #     if not args.filename == "":
+    #         writer.add_scalar('data/train auc', train_acc, epoch)
+    #         writer.add_scalar('data/val auc', val_acc, epoch)
+    #         writer.add_scalar('data/test auc', test_acc, epoch)
+    #
+    #     print("")
 
     if not args.filename == "":
         writer.close()
     
     print_to_file("result.txt", args.dataset+","+str(Val)+","+str(test))
+    if args.write_pred:
+        # eval(args, model, device, train_loader, "ptrain.txt")
+        # eval(args, model, device, valid_loader, "pvalid.txt")
+        eval(args, model, device, test_loader, "ptest.txt")
+
+
 if __name__ == "__main__":
     main()
