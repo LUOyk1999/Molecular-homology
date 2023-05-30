@@ -1,0 +1,17 @@
+numpy
+scipy
+networkx
+scikit_learn
+torchvision
+gensim
+tqdm
+pandas
+einops
+ogb
+rdkit
+matplotlib
+mendeleev
+giotto-tda
+gudhi
+xgboost
+tensorboardX
