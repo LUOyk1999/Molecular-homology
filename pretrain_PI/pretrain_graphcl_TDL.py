@@ -117,15 +117,12 @@ class graphcl(nn.Module):
 def train(args, model, device, dataset, optimizer):
 
     dataset.aug = "none"
-    dataset1 = dataset.shuffle()
-    dataset2 = deepcopy(dataset1)
-    dataset0 = deepcopy(dataset1)
-    dataset0.aug, dataset1.aug_ratio = 'none', 0
-    dataset1.aug, dataset1.aug_ratio = args.aug1, args.aug_ratio1
+    dataset2 = dataset.shuffle()
+    dataset0 = deepcopy(dataset2)
+    dataset0.aug, dataset0.aug_ratio = 'none', 0
     dataset2.aug, dataset2.aug_ratio = args.aug2, args.aug_ratio2
 
     loader0 = DataLoader(dataset0, batch_size=args.batch_size, num_workers = args.num_workers, shuffle=False)
-    loader1 = DataLoader(dataset1, batch_size=args.batch_size, num_workers = args.num_workers, shuffle=False)
     loader2 = DataLoader(dataset2, batch_size=args.batch_size, num_workers = args.num_workers, shuffle=False)
 
     model.train()
@@ -133,22 +130,18 @@ def train(args, model, device, dataset, optimizer):
     train_l2 = 0
     train_loss = 0
 
-    for step, batch in enumerate(tqdm(zip(loader0, loader1, loader2), desc="Iteration")):
-        batch0, batch1, batch2 = batch
+    for step, batch in enumerate(tqdm(zip(loader0, loader2), desc="Iteration")):
+        batch0, batch2 = batch
         batch0 = batch0.to(device)
-        batch1 = batch1.to(device)
         batch2 = batch2.to(device)
 
         optimizer.zero_grad()
         
         PI = batch0.PI.reshape(batch0.id.shape[0],-1)
         x0 = model.forward_cl(batch0.x, batch0.edge_index, batch0.edge_attr, batch0.batch)
-        # x0 = model.forward_topo_phi(PI, x0)
-        x1 = model.forward_cl(batch1.x, batch1.edge_index, batch1.edge_attr, batch1.batch)
         x2 = model.forward_cl(batch2.x, batch2.edge_index, batch2.edge_attr, batch2.batch)
         
         l1 = model.loss_cl(x0, x2)
-        # l2 = model.loss_cl(x1, x0)
         l2 = loss_topo(x0, x0, PI) 
         loss = l1 + l2
         loss.backward()
