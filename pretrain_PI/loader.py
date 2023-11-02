@@ -304,6 +304,7 @@ class MoleculeDataset(InMemoryDataset):
             PI2 = torch.FloatTensor(dict_save2[idx]).flatten()
             PI3 = torch.FloatTensor(dict_save3[idx]).flatten()
             data.PI = torch.cat([PI1,PI2,PI3])
+            # print(data.PI.shape)
             if(torch.sum(data.PI)<=1e-5):
                 data.PI += 1e-5
             
@@ -1130,9 +1131,11 @@ class MoleculeDataset_aug(InMemoryDataset):
                                                     slices[idx + 1])
             data[key] = item[s]
         
-        topo_feature1, topo_feature2, topo_feature3 = self.topo
-        data.PI = [torch.FloatTensor(topo_feature1[idx]),torch.FloatTensor(topo_feature2[idx]),torch.FloatTensor(topo_feature3[idx])]
-        data.PI = torch.cat(data.PI)
+        dict_save1,dict_save2,dict_save3 = self.topo
+        PI1 = torch.FloatTensor(dict_save1[idx]).flatten()
+        PI2 = torch.FloatTensor(dict_save2[idx]).flatten()
+        PI3 = torch.FloatTensor(dict_save3[idx]).flatten()
+        data.PI = torch.cat([PI1,PI2,PI3])
         if(torch.sum(data.PI)<=1e-5):
             data.PI += 1e-5
             

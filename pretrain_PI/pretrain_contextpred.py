@@ -130,7 +130,7 @@ def main():
                         help='how the contexts are pooled (sum, mean, or max)')
     parser.add_argument('--mode', type=str, default = "cbow", help = "cbow or skipgram")
     parser.add_argument('--dataset', type=str, default = 'zinc_standard_agent', help='root directory of dataset for pretraining')
-    parser.add_argument('--input_model_file', type=str, default = 'tae', help='filename to read the model (if there is any)')
+    parser.add_argument('--input_model_file', type=str, default = './models/tae', help='filename to read the model (if there is any)')
     parser.add_argument('--output_model_file', type=str, default = 'tae_contextpred', help='filename to output the model')
     parser.add_argument('--gnn_type', type=str, default="gin")
     parser.add_argument('--seed', type=int, default=0, help = "Seed for splitting dataset.")

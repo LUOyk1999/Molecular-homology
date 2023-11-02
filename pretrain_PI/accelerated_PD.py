@@ -142,7 +142,7 @@ def Accelerate_PD(Pos_edges, Neg_edges, simplex_filter):
                 if(pos_edge[0] in Parent):
                     path_0 = [(pos_edge[0],Parent[pos_edge[0]])]
                 else:
-                    break
+                    continue
             else:
                 path_0 = []
             if pos_edge[1] != root:

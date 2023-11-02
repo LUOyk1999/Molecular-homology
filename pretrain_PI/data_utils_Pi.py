@@ -79,7 +79,7 @@ def compute_persistence_image(g, filt = 'degree', hks_time = 0.1, mode = 'PI'):
 
     # prepare computation of extended persistence
     if len(subgraph.edges()) == 0:
-        return np.zeros(50), np.array([]), np.array([])
+        return np.zeros(50)
     
     if len(subgraph.edges()) > 0:
         edge_index = torch.Tensor([[e[0], e[1]] for e in subgraph.edges()]).transpose(0, 1).long()
@@ -207,7 +207,7 @@ def call(data, name='zinc', filt = 'degree', hks_time = 0.1, mode = 'PI'):
     dict_store = []
     PD = []
     result = []
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(processes=10)
     # for original computation
     for tt in tqdm(range(len(data))):
         g = to_networkx(data[tt],to_undirected=True,node_attrs=["x"],edge_attrs=["edge_attr"])
@@ -216,7 +216,7 @@ def call(data, name='zinc', filt = 'degree', hks_time = 0.1, mode = 'PI'):
     pool.close()
     pool.join()
     dict_store = [r.get() for r in result]
-    print(dict_store)
+    # print(dict_store)
     if (name=='zinc_standard_agent'):
         name_copy = 'zinc'
     else:

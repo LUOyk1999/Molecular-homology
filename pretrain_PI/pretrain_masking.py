@@ -103,7 +103,7 @@ def main():
     parser.add_argument('--JK', type=str, default="last",
                         help='how the node features are combined across layers. last, sum, max or concat')
     parser.add_argument('--dataset', type=str, default = 'zinc_standard_agent', help='root directory of dataset for pretraining')
-    parser.add_argument('--input_model_file', type=str, default = 'tae', help='filename to read the model (if there is any)')
+    parser.add_argument('--input_model_file', type=str, default = './models/tae', help='filename to read the model (if there is any)')
     parser.add_argument('--output_model_file', type=str, default = './pretrain_models/tae_masking', help='filename to output the model')
     parser.add_argument('--gnn_type', type=str, default="gin")
     parser.add_argument('--seed', type=int, default=0, help = "Seed for splitting dataset.")

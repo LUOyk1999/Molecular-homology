@@ -69,7 +69,7 @@ def main():
     parser.add_argument('--JK', type=str, default="last",
                         help='how the node features across layers are combined. last, sum, max or concat')
     parser.add_argument('--dataset', type=str, default = 'zinc_standard_agent', help='root directory of dataset. For now, only classification.')
-    parser.add_argument('--input_model_file', type=str, default = 'tae', help='filename to read the model (if there is any)')
+    parser.add_argument('--input_model_file', type=str, default = './models/tae', help='filename to read the model (if there is any)')
     parser.add_argument('--output_model_file', type = str, default = './pretrain_models/tae_edgepred', help='filename to output the pre-trained model')
     parser.add_argument('--gnn_type', type=str, default="gin")
     parser.add_argument('--num_workers', type=int, default = 8, help='number of workers for dataset loading')

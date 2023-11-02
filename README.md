@@ -28,14 +28,21 @@ sh remove_old.sh
 ```
 cd pretrain_PI
 sh PI.sh
+
+python todd_Pi.py
 ```
 
-Then you can pretrain TAE by
+Then you can pretrain TAE_ahd by
 ```
 python TAE.py
 ```
 
-you can pretrain TAE+contextpred (TAE+edgepred, TAE+masking) by
+you can pretrain TAE_todd by
+```
+python TAE_todd.py
+```
+
+you can pretrain TAE_ahd+contextpred (TAE_ahd+edgepred, TAE_ahd+masking) by
 ```
 python pretrain_contextpred.py
 
@@ -44,22 +51,22 @@ python pretrain_edgepred.py
 python pretrain_masking.py
 ```
 
-You can pretrain GraphCL+TDL by
+You can pretrain GraphCL+TDL_atom by
 ```
 python pretrain_graphcl_TDL.py
 ```
 
-You can pretrain GraphLoG+TDL by
+You can pretrain GraphLoG+TDL_atom by
 ```
 python pretrain_graphlog_TDL.py
 ```
 
-You can pretrain JOAO+TDL by
+You can pretrain JOAO+TDL_atom by
 ```
 python JOAO_TDL.py
 ```
 
-You can pretrain SimGRACE+TDL by
+You can pretrain SimGRACE+TDL_atom by
 ```
 python pretrain_simgrace_TDL.py
 ```
@@ -77,11 +84,17 @@ python Pi_similarity_h.py
 The pre-trained models `.pth` we provide.
 ```
 graphcl_TDL.pth
+graphcl_TDL_todd.pth
 graphlog_TDL.pth
-joao_TDL.
+graphlog_TDL_todd.pth
+joao_TDL.pth
+joao_TDL_todd.pth
 simgrace_TDL.pth
+simgrace_TDL_todd.pth
 tae.pth
+tae_todd.pth
 tae_contextpred.pth
+tae_contextpred_todd.pth
 ```
 
 ## Evaluation
@@ -89,7 +102,7 @@ tae_contextpred.pth
 Primary Results: you can evaluate the pretrained model by finetuning on downstream tasks
 ```
 cd finetune
-python finetune.py --input_model_file ../pretrain_PI/graphcl_TDL.pth --dataset bace
+python finetune.py --input_model_file ../pretrain_PI/models/graphcl_TDL.pth --dataset bace
 
 or
 

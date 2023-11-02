@@ -198,9 +198,9 @@ def main():
     model2 = GNN_graphpred(args.num_layer, args.emb_dim, num_tasks, JK = args.JK, drop_ratio = args.dropout_ratio, graph_pooling = args.graph_pooling, gnn_type = args.gnn_type)
     model3 = GNN_graphpred(args.num_layer, args.emb_dim, num_tasks, JK = args.JK, drop_ratio = args.dropout_ratio, graph_pooling = args.graph_pooling, gnn_type = args.gnn_type)
     
-    model1.from_pretrained('../pretrain_PI/tae_atom.pth')
-    model2.from_pretrained('../pretrain_PI/tae_degree.pth')
-    model3.from_pretrained('../pretrain_PI/tae_hks.pth')
+    model1.from_pretrained('../pretrain_PI/models/tae_atom.pth')
+    model2.from_pretrained('../pretrain_PI/models/tae_degree.pth')
+    model3.from_pretrained('../pretrain_PI/models/tae_hks.pth')
     
     model_final = MLP(num_tasks, args)
     model_final.to(device)
