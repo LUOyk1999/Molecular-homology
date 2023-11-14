@@ -1,4 +1,9 @@
+# Improving Self-supervised Molecular Representation Learning using Persistent Homology (NeurIPS 2023)
+
+The repository implements the [Improving Self-supervised Molecular Representation Learning using Persistent Homology](https://openreview.net/forum?id=wEiUGpcr0M) in Pytorch Geometric.
+
 ## Installation
+
 Tested with Python 3.7, PyTorch 1.12.1, and PyTorch Geometric 2.2.0.
 The dependencies are managed by [conda]:
 
@@ -19,8 +24,6 @@ You can use this sh script to delete these files directly:
 cd finetune
 sh remove_old.sh
 ```
-
-# Improving Self-supervised Molecular Representation Learning using Persistent Homology
 
 
 ## Calculate Topological Fingerprints (PI) and Training
