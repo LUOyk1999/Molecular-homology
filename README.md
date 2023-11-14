@@ -2,7 +2,7 @@
 
 The repository implements the [Improving Self-supervised Molecular Representation Learning using Persistent Homology](https://openreview.net/forum?id=wEiUGpcr0M) in Pytorch Geometric.
 
-![PH_poster](https://raw.githubusercontent.com/LUOyk1999/images/main/images/PH_poster.png)
+![image-20231114211119860](https://raw.githubusercontent.com/LUOyk1999/images/main/images/image-20231114211119860.png)
 
 ## Installation
 
