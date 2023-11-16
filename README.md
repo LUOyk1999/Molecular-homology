@@ -158,6 +158,21 @@ python PI_SSVM.py
 python PI_XGB.py
 ```
 
+## Reference
+
+If you find our codes useful, please consider citing our work
+
+```
+@inproceedings{
+luo2023improving,
+title={Improving Self-supervised Molecular Representation Learning using Persistent Homology},
+author={Yuankai Luo and Lei Shi and Veronika Thost},
+booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
+year={2023},
+url={https://openreview.net/forum?id=wEiUGpcr0M}
+}
+```
+
 ## Poster
 
 ![image-20231114211119860](https://raw.githubusercontent.com/LUOyk1999/images/main/images/PH_poster.png)
